@@ -15,5 +15,8 @@
     "app/bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.1"
+  }
 }
