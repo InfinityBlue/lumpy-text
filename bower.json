@@ -1,0 +1,19 @@
+{
+  "name": "lumpy-text",
+  "version": "0.0.0",
+  "homepage": "https://github.com/abruzzihraig/lumpy-text",
+  "authors": [
+    "何洋 <yang.he@jimubox.com>"
+  ],
+  "description": "The lumpy-text is a project that makes you using linear text.",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ]
+}
