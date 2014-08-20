@@ -1,19 +1,20 @@
-(function() {
-    $.reduce = function(arr, fnReduce, valueInitial) {
+(function($) {
+    $.reduce = function(arr, reduce_cb, prev) {
         arr = arr.toArray();
         if (Array.prototype.reduce) {
-            return Array.prototype.reduce.call(arr, fnReduce, valueInitial);
+            return Array.prototype.reduce.call(arr, reduce_cb, prev);
         }
-        $.each(arr, function(i, value) {
-            valueInitial = fnReduce.call(null, valueInitial, value, i, arr);
+        $.each(arr, function(i, cur) {
+            result = reduce_cb.call(null, prev, cur, i, arr);
+            prev = cur;
         });
-        return valueInitial;
+        return result;
     };
 
-    $.fn.reduce = function ( callback, valueInitial ) {
-        return  jQuery.reduce(this, function( valueInitial, value, i, arr ) {
-            return callback.call( null, valueInitial, value, i, arr );
-        }, valueInitial);
+    $.fn.reduce = function (cb, prev) {
+        return $.reduce(this, function(prev, cur, i, arr) {
+            return cb.call(null, prev, cur, i, arr);
+        }, prev);
     }
 
     $.fn.lumpy = function (options) {
