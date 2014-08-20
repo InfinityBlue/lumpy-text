@@ -1,52 +1,52 @@
-$.fn.lumpy = function (options) {
-    var opt = {
-        begin: '#F714C1',
-        end: '#1B8A43',
-        steps: 50
+(function() {
+    $.reduce = function(arr, fnReduce, valueInitial) {
+        arr = arr.toArray();
+        if (Array.prototype.reduce) {
+            return Array.prototype.reduce.call(arr, fnReduce, valueInitial);
+        }
+        $.each(arr, function(i, value) {
+            valueInitial = fnReduce.call(null, valueInitial, value, i, arr);
+        });
+        return valueInitial;
     };
 
-    var origin_text = this.text();
-    var origin_text_len = origin_text.length;
-    this.text(origin_text.substr(0, origin_text_len - 5));
-
-    for(var i=origin_text.length-1, len=origin_text.length - opt.steps; i>len; i--) {
-        var span = $('<span></span>');
-        span.text(origin_text[i]);
-        var color = cal_gradient(opt.begin, opt.end, opt.steps, origin_text_len-i);
-        console.log(color);
-        span.css('color', color);
-        this.append(span)
+    $.fn.reduce = function ( callback, valueInitial ) {
+        return  jQuery.reduce(this, function( valueInitial, value, i, arr ) {
+            return callback.call( null, valueInitial, value, i, arr );
+        }, valueInitial);
     }
 
-    function cal_gradient(begin, end, steps, cur_step) {
-        var r = parseInt(begin.substr(1, 2), 16);
-        var g = parseInt(begin.substr(3, 2), 16);
-        var b = parseInt(begin.substr(5, 2), 16);
-        var re = parseInt(end.substr(1, 2), 16);
-        var ge = parseInt(end.substr(3, 2), 16);
-        var be = parseInt(end.substr(5, 2), 16);
-        var rf = Number(Math.abs(((r - re) * cur_step / steps).toFixed(0))).toString(16);
-        var gf = Number(Math.abs(((g - ge) * cur_step / steps).toFixed(0))).toString(16);
-        var bf = Number(Math.abs(((b - be) * cur_step / steps).toFixed(0))).toString(16);
+    $.fn.lumpy = function (options) {
+        var opts = {
+            begin: '#F714C1',
+            end: '#1B8A43',
+            steps: 50
+        };
+        opt = $.extend(opts, options);
 
-        if ((''+rf).length === 1) {
-            rf = '0' + rf;
+        var origin_text = this.text();
+        var exp_text = origin_text.substr(origin_text_len - opt.steps);
+        var origin_text_len = origin_text.length;
+        this.text(origin_text.substr(0, origin_text_len - opt.steps));
+
+        for(var i=1, len=opt.steps; i<len; i++) {
+            var color = cal_gradient(opt.begin, opt.end, opt.steps, i);
+            var span = $('<span></span>').css('color', color).text(exp_text[i]);
+            this.append(span)
         }
-        if ((''+rf).length === 0) {
-            rf = '00';
+
+        function cal_gradient(begin, end, steps, cur_step) {
+             return $([{}, {}, {}]).map(function(index, elem) {
+                elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
+                elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
+                elem.dist = Number(elem.begin - ((elem.begin - elem.end) * cur_step / steps).toFixed(0)).toString(16);
+                if(elem.dist.length === 1) {
+                    elem.dist = '0' + elem.dist;
+                }
+                return elem.dist;
+            }).reduce(function(prev, cur) {
+                return prev + cur;
+            }, '#');
         }
-        if ((''+gf).length === 1) {
-            gf = '0' + gf;
-        }
-        if ((''+gf).length === 0) {
-            gf = '00';
-        }
-        if ((''+bf).length === 1) {
-            bf = '0' + bf;
-        }
-        if ((''+bf).length === 0) {
-            bf = '00';
-        }
-        return '#'+rf+gf+bf;
-    }
-}
+    };
+})(jQuery);
