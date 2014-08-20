@@ -20,28 +20,33 @@
 
     // lumpy function
     $.fn.lumpy = function (opt) {
-        var defaults = {
-            begin: '#F714C1',
-            end: '#1B8A43',
-            steps: 50
-        };
-        opt = $.extend(defaults, opt);
+        (function init(self, opt) {
+            var defaults = {
+                begin: '#F714C1',
+                end: '#1B8A43',
+                steps: 50
+            };
+            opt = $.extend(defaults, opt);
 
-        var origin_text = this.text();
-        var origin_text_len = origin_text.length;
-        var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
-        var trim_lumpy_text = trim(lumpy_text, true);
-        this.text(origin_text.substr(0, origin_text_len - opt.steps));
+            var origin_text = self.text();
+            var origin_text_len = origin_text.length;
+            var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
+            var trim_lumpy_text = trim(lumpy_text, true);
+            self.text(origin_text.substr(0, origin_text_len - opt.steps));
 
-        for(var i=0, j=1, len=opt.steps; i<len; i++) {
-            if(lumpy_text[i] !== ' ') {
-                var color = cal_gradient(opt.begin, opt.end, trim_lumpy_text.length, j++);
-                var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
-            } else {
-                var span = $('<span></span>').text(lumpy_text[i]);
+            // check the steps length
+            if(opt.steps < trim_lumpy_text) opt.steps = trim_lumpy_text;
+
+            for(var i=0, j=1, len=opt.steps; i<len; i++) {
+                if(lumpy_text[i] !== ' ') {
+                    var color = cal_gradient(opt.begin, opt.end, trim_lumpy_text.length, j++);
+                    var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
+                } else {
+                    var span = $('<span></span>').text(lumpy_text[i]);
+                }
+                self.append(span);
             }
-            this.append(span);
-        }
+        })(this, opt);
 
         // trim string
         function trim(str, is_global) {
