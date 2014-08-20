@@ -1,7 +1,7 @@
 $(function () {
     $('.lumpy').lumpy({
-        begin: '#ffaf41',
-        end: '#3e56fb',
+        begin: '#00f928',
+        end: '#fe47ff',
         steps: 100
     });
 });
