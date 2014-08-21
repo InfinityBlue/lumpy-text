@@ -25,15 +25,23 @@
             var defaults = {
                 begin: '#F714C1',
                 end: '#1B8A43',
-                steps: 50
+                steps: 50,
+                direction: 'end'
             };
             opt = $.extend(defaults, opt);
 
             var origin_text = _self.text();
             var origin_text_len = origin_text.length;
-            var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
-            var trim_lumpy_text = trim(lumpy_text, true);
-            _.self.text(origin_text.substr(0, origin_text_len - opt.steps));
+            if(opt.steps > origin_text_len) opt.steps = origin_text_len;
+            if(opt.direction === 'end') {
+                var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
+                var trim_lumpy_text = trim(lumpy_text, true);
+                _self.text(origin_text.substr(0, origin_text_len - opt.steps));
+            } else if (opt.direction === 'begin') {
+                var lumpy_text = origin_text.substr(0, opt.steps);
+                var trim_lumpy_text = trim(lumpy_text, true);
+                _self.text(origin_text.substr(opt.steps));
+            }
 
             // check the steps length
             if(opt.steps < trim_lumpy_text.length) opt.steps = trim_lumpy_text.length;
@@ -48,7 +56,11 @@
                 }
                 changed_arr.push(span);
             }
-            _.self.append(changed_arr);
+            if(opt.direction === 'end') {
+                _self.append(changed_arr);
+            } else if (opt.direction === 'begin') {
+                _self.prepend(changed_arr);
+            }
         })(_self, opt);
 
         // trim string
