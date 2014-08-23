@@ -52,9 +52,8 @@
             // check color type
             opt = check_color_type(opt);
 
-            if(opt.color_type === 'unknown') {
-                throw new Error('the begin or end color value is unknown');
-            }
+            // error handler
+            validate_options(opt);
 
             // convert short hex color
             opt = convert_hex_color(opt);
@@ -87,7 +86,7 @@
 
         // check steps (light check)
         function check_steps(opt, text) {
-            if(opt.steps < text.length) [
+            if(opt.steps < text.length) {
                 opt.steps = text.length;
             }
             return opt;
@@ -112,6 +111,13 @@
                 opt.color_type = 'unknown';
             }
             return opt;
+        }
+
+        // error handler
+        function validate_options(opt) {
+            if(opt.color_type === 'unknown') {
+                throw new Error('the begin or end color value is unknown');
+            }
         }
 
         // convert short hex color to real hex color
