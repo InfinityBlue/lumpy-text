@@ -1,7 +1,9 @@
 (function($) {
     // patch the reduce to jQuery
     $.reduce = function(arr, reduce_cb, prev) {
-        arr = arr.toArray();
+        if(arr.toArray !== undefined) {
+            arr = arr.toArray();
+        }
         if (Array.prototype.reduce) {
             return Array.prototype.reduce.call(arr, reduce_cb, prev);
         }
@@ -11,7 +13,6 @@
         });
         return result;
     };
-
     $.fn.reduce = function (cb, prev) {
         return $.reduce(this, function(prev, cur, i, arr) {
             return cb.call(null, prev, cur, i, arr);
@@ -23,8 +24,8 @@
         var _self = this;
         (function init(_self, opt) {
             var defaults = {
-                begin: '#F714C1',
-                end: '#1B8A43',
+                begin: '#000',
+                end: '#eee',
                 steps: 50,
                 direction: 'end'
             };
@@ -32,7 +33,9 @@
 
             var origin_text = _self.text();
             var origin_text_len = origin_text.length;
+
             if(opt.steps > origin_text_len) opt.steps = origin_text_len;
+
             if(opt.direction === 'end') {
                 var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
                 var trim_lumpy_text = trim(lumpy_text, true);
@@ -45,6 +48,9 @@
 
             // check the steps length
             if(opt.steps < trim_lumpy_text.length) opt.steps = trim_lumpy_text.length;
+
+            // conver short hex color
+            opt = convert_hex_color(opt);
 
             var changed_arr = [];
             for(var i=0, j=1, len=opt.steps; i<len; i++) {
@@ -72,9 +78,25 @@
             }
         }
 
+        // convert short hex color to real hex color
+        function convert_hex_color(opt) {
+            if(opt.begin.length === 4 && opt.end.length === 4) {
+                opt.begin = generate_hex(opt.begin);
+                opt.end = generate_hex(opt.end);
+
+                function generate_hex(hex_short_obj) {
+                    var hex_short_arr = [hex_short_obj.substr(1, 1), hex_short_obj.substr(2, 1), hex_short_obj.substr(3, 1)];
+                    return $.reduce(hex_short_arr, function(prev, cur) {
+                        return prev + cur  + cur;
+                    }, '#');
+                }
+            }
+            return opt;
+        }
+
         // calculate the gradient of color
         function cal_gradient(begin, end, steps, cur_step) {
-             return $([{}, {}, {}]).map(function(index, elem) {
+            return $([{}, {}, {}]).map(function(index, elem) {
                 elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
                 elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
                 elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
