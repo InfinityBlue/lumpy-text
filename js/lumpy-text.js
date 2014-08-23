@@ -26,6 +26,7 @@
             var defaults = {
                 begin: '#000',
                 end: '#eee',
+                color_type: 'rgb',
                 steps: 50,
                 direction: 'end'
             };
@@ -55,7 +56,7 @@
             var changed_arr = [];
             for(var i=0, j=1, len=opt.steps; i<len; i++) {
                 if(lumpy_text[i] !== ' ') {
-                    var color = cal_gradient(opt.begin, opt.end, trim_lumpy_text.length, j++);
+                    var color = cal_gradient(opt.color_type, opt.begin, opt.end, trim_lumpy_text.length, j++);
                     var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
                 } else {
                     var span = $('<span></span>').text(lumpy_text[i]);
@@ -95,13 +96,17 @@
         }
 
         // calculate the gradient of color
-        function cal_gradient(begin, end, steps, cur_step) {
+        function cal_gradient(color_type, begin, end, steps, cur_step) {
             return $([{}, {}, {}]).map(function(index, elem) {
-                elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
-                elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
-                elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
-                if(elem.dist.length === 1) {
-                    elem.dist = '0' + elem.dist;
+                if(color_type === 'hex') {
+                    elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
+                    elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
+                    elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
+                    if(elem.dist.length === 1) {
+                        elem.dist = '0' + elem.dist;
+                    }
+                } else {
+                    elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
                 }
                 return elem.dist;
             }).reduce(function(prev, cur) {
