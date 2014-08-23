@@ -47,10 +47,11 @@
             }
 
             // check the steps length
-            if(opt.steps < trim_lumpy_text.length) opt.steps = trim_lumpy_text.length;
+            opt = check_steps(opt, trim_lumpy_text);
 
             // check color type
             opt = check_color_type(opt);
+
             if(opt.color_type === 'unknown') {
                 throw new Error('the begin or end color value is unknown');
             }
@@ -84,7 +85,15 @@
             }
         }
 
-        // check color type
+        // check steps (light check)
+        function check_steps(opt, text) {
+            if(opt.steps < text.length) [
+                opt.steps = text.length;
+            }
+            return opt;
+        }
+
+        // check color type (strict check)
         function check_color_type(opt) {
             var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
             var rgb_regex = /^((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
@@ -107,7 +116,7 @@
 
         // convert short hex color to real hex color
         function convert_hex_color(opt) {
-            if(opt.begin.length === 4 && opt.end.length === 4) {
+            if(opt.begin.length === 4) {
                 opt.begin = generate_hex(opt.begin);
                 opt.end = generate_hex(opt.end);
 
