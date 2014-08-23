@@ -58,21 +58,8 @@
             // convert short hex color
             opt = convert_hex_color(opt);
 
-            var changed_arr = [];
-            for(var i=0, j=1, len=opt.steps; i<len; i++) {
-                if(lumpy_text[i] !== ' ') {
-                    var color = cal_gradient(opt.color_type, opt.begin, opt.end, trim_lumpy_text.length, j++);
-                    var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
-                } else {
-                    var span = $('<span></span>').text(lumpy_text[i]);
-                }
-                changed_arr.push(span);
-            }
-            if(opt.direction === 'end') {
-                _self.append(changed_arr);
-            } else if (opt.direction === 'begin') {
-                _self.prepend(changed_arr);
-            }
+            // handle every word in lumpy text and append the result to dom
+            generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
         })(_self, opt);
 
         // trim string
@@ -134,6 +121,25 @@
                 }
             }
             return opt;
+        }
+
+        // generate the final lumpy text
+        function generate_lumpy_text(lumpy_obj, opt, lumpy_text, trim_lumpy_text) {
+            var changed_arr = [];
+            for(var i=0, j=1, len=opt.steps; i<len; i++) {
+                if(lumpy_text[i] !== ' ') {
+                    var color = cal_gradient(opt.color_type, opt.begin, opt.end, trim_lumpy_text.length, j++);
+                    var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
+                } else {
+                    var span = $('<span></span>').text(lumpy_text[i]);
+                }
+                changed_arr.push(span);
+            }
+            if(opt.direction === 'end') {
+                lumpy_obj.append(changed_arr);
+            } else if (opt.direction === 'begin') {
+                lumpy_obj.prepend(changed_arr);
+            }
         }
 
         // calculate the gradient of color
