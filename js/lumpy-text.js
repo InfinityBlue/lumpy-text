@@ -26,7 +26,6 @@
             var defaults = {
                 begin: '#000',
                 end: '#eee',
-                color_type: 'rgb',
                 steps: 50,
                 direction: 'end'
             };
@@ -50,7 +49,13 @@
             // check the steps length
             if(opt.steps < trim_lumpy_text.length) opt.steps = trim_lumpy_text.length;
 
-            // conver short hex color
+            // check color type
+            opt = check_color_type(opt);
+            if(opt.color_type === 'unknown') {
+                throw new Error('the begin or end color value is unknown');
+            }
+
+            // convert short hex color
             opt = convert_hex_color(opt);
 
             var changed_arr = [];
@@ -79,6 +84,27 @@
             }
         }
 
+        // check color type
+        function check_color_type(opt) {
+            var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
+            var rgb_regex = /^((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
+            var rgb_regex_fn = function(val) {
+                return rgb_regex.test(val);
+            }
+
+            if (hex_regex.test(opt.begin) && hex_regex.test(opt.end)) {
+                opt.color_type = 'hex';
+                return opt;
+            } else if($.isArray(opt.begin) && $.isArray(opt.end)
+                    && opt.begin.length === 3 && opt.end.length === 3
+                    && opt.begin.every(rgb_regex_fn) && opt.end.every(rgb_regex_fn)){
+                opt.color_type = 'rgb';
+            } else {
+                opt.color_type = 'unknown';
+            }
+            return opt;
+        }
+
         // convert short hex color to real hex color
         function convert_hex_color(opt) {
             if(opt.begin.length === 4 && opt.end.length === 4) {
@@ -102,11 +128,12 @@
                     elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
                     elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
                     elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
-                    if(elem.dist.length === 1) {
-                        elem.dist = '0' + elem.dist;
-                    }
                 } else {
                     elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
+                }
+
+                if(elem.dist.length === 1) {
+                    elem.dist = '0' + elem.dist;
                 }
                 return elem.dist;
             }).reduce(function(prev, cur) {
