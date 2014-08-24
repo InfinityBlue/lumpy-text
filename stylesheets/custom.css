@@ -15,14 +15,21 @@ body {
     background-position: 0 0, 0 50%;
     background-repeat: repeat-x, repeat;
 }
-
 .inner {
-    background: -webkit-gradient(linear, left top, right top, from(#e5e5e5), color-stop(0.05, #f9f9f9), color-stop(0.95, #e5e5e5), to(#f9f9f9));
-    background: -webkit-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
-    background: -moz-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
-    background: -ms-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
-    background: -o-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
+    background: -webkit-linear-gradient(left, #E5E5E5, rgba(255, 245, 254, 0.7) 2%, rgba(255, 245, 254, 0.7) 98%, #E5E5E5);
+    background: -moz-linear-gradient(left, #E5E5E5, rgba(255, 245, 254, 0.7) 2%, rgba(255, 245, 254, 0.7) 98%, #E5E5E5);
+    background: -ms-linear-gradient(left, #E5E5E5, rgba(255, 245, 254, 0.7) 2%, rgba(255, 245, 254, 0.7) 98%, #E5E5E5);
+    background: -o-linear-gradient(left, #E5E5E5, rgba(255, 245, 254, 0.7) 2%, rgba(255, 245, 254, 0.7) 98%, #E5E5E5);
+}
+.anchor {
+    font-size: 3em;
+    color: #ff2c60;
+    transition: .2s ease all;
+}
+.anchor:hover {
+    color: #ff5e9a;
 }
 .lumpy {
+    color: #000;
     font-size: 2em;
 }

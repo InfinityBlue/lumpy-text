@@ -176,14 +176,17 @@ code {
 
 pre {
   padding: 20px;
-  background: #303030;
-  color: #f2f2f2;
+  background: #FF2C60;
+  color: #F2F2F2;
   text-shadow: none;
   overflow: auto;
+  border: 5px dotted #FED4DB;
+  box-shadow: 10px 10px #808080;
 }
 pre code {
   color: #f2f2f2;
-  background-color: #303030;
+  font-size: 1.6em;
+  background: #FF2C60;
   border: none;
   padding: 0;
 }
