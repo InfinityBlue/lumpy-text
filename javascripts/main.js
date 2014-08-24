@@ -1,7 +1,7 @@
 $(function() {
     $('.lumpy').lumpy({
-        begin: '#000',
-        end: '#eee',
+        begin: '#eee',
+        end: '#333',
         steps: 200
     });
 });

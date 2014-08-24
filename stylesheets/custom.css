@@ -30,6 +30,12 @@ body {
     color: #ff5e9a;
 }
 .lumpy {
+    padding: 20px;
     color: #000;
     font-size: 2em;
+    background-color: #333;
+    border: 5px dotted #FED4DB;
+    box-shadow: 10px 10px #ff2c60;
+    text-shadow: none;
+    transition: .2s all ease;
 }
