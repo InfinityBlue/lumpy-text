@@ -23,3 +23,6 @@ body {
     background: -ms-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
     background: -o-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
 }
+.lumpy {
+    font-size: 2em;
+}

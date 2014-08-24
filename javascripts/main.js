@@ -1,1 +1,7 @@
-console.log('This would be the main JS file.');
+$(function() {
+    $('.lumpy').lumpy({
+        begin: '#000',
+        end: '#eee',
+        steps: 200
+    });
+});
