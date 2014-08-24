@@ -10,7 +10,7 @@
 }
 
 body {
-    background-color: #ff888c;
+    background-color: #ff87a3;
     background-image: url("../images/shadow_light.png"), url("../images/pixels.png");
     background-position: 0 0, 0 50%;
     background-repeat: repeat-x, repeat;
@@ -29,9 +29,12 @@ body {
 .anchor:hover {
     color: #ff5e9a;
 }
+.function-title {
+    margin: 50px 0 20px;
+}
 .lumpy {
     padding: 20px;
-    color: #000;
+    color: #fff;
     font-size: 2em;
     background-color: #333;
     border: 5px dotted #FED4DB;
