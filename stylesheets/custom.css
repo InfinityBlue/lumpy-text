@@ -1,0 +1,25 @@
+::-moz-selection {
+    color: #eee;
+    background: #ff68a7;
+    text-shadow: none;
+}
+::selection {
+    color: #eee;
+    background: #ff68a7;
+    text-shadow: none;
+}
+
+body {
+    background-color: #ff888c;
+    background-image: url("../images/shadow_light.png"), url("../images/pixels.png");
+    background-position: 0 0, 0 50%;
+    background-repeat: repeat-x, repeat;
+}
+
+.inner {
+    background: -webkit-gradient(linear, left top, right top, from(#e5e5e5), color-stop(0.05, #f9f9f9), color-stop(0.95, #e5e5e5), to(#f9f9f9));
+    background: -webkit-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
+    background: -moz-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
+    background: -ms-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
+    background: -o-linear-gradient(left, #e5e5e5, #f9f9f9 5%, #f9f9f9 95%, #e5e5e5);
+}
