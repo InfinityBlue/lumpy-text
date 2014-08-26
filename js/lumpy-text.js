@@ -25,6 +25,7 @@
         (function init(_self, opt) {
             var defaults = {
                 color: null,
+                opacity: null,
                 steps: 50,
                 direction: 'end'
             };
@@ -48,7 +49,7 @@
             // check the steps length
             opt = check_steps(opt, trim_lumpy_text);
 
-            if(check_color_existed(opt)) {
+            if(check_property_existed(opt.color)) {
                 // check color type
                 opt = check_color_type(opt);
 
@@ -57,10 +58,18 @@
 
                 // convert short hex color
                 opt = convert_hex_color(opt);
-
-                // handle every word in lumpy text and append the result to dom
-                generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
             }
+
+            if(check_property_existed(opt.opacity)) {
+                // check opacity type
+                opt = check_opacity_type(opt);
+
+                // error handler
+                validate_options(opt);
+            }
+
+            // handle every word in lumpy text and append the result to dom
+            generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
         })(_self, opt);
 
         // trim string
@@ -80,9 +89,9 @@
             return opt;
         }
 
-        // check color existed
-        function check_color_existed(opt) {
-            if(opt.color !== null && opt.color.begin && opt.color.end) {
+        // check property existed
+        function check_property_existed(property) {
+            if(property !== null && property.begin && property.end) {
                 return true;
             }
             return false;
@@ -109,10 +118,24 @@
             return opt;
         }
 
+        // check opacity type (strict check)
+        function check_opacity_type(opt) {
+            var regex = /^(1|(0\.\d{1,2}))$/;
+            if (regex.test(opt.opacity.begin) && regex.test(opt.opacity.end)) {
+                opt.opacity_type = 'opacity';
+            } else {
+                opt.opacity_type = 'unknown';
+            }
+            return opt;
+        }
+
         // error handler
         function validate_options(opt) {
-            if(opt.color_type === 'unknown') {
+            if(opt.color_type && opt.color_type === 'unknown') {
                 throw new Error('the begin or end color value is unknown');
+            }
+            if(opt.opacity_type && opt.opacity_type === 'unknown') {
+                throw new Error('the opacity is unknown');
             }
         }
 
