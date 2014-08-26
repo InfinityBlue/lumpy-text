@@ -24,8 +24,7 @@
         var _self = this;
         (function init(_self, opt) {
             var defaults = {
-                begin: '#000',
-                end: '#eee',
+                color: null,
                 steps: 50,
                 direction: 'end'
             };
@@ -49,17 +48,19 @@
             // check the steps length
             opt = check_steps(opt, trim_lumpy_text);
 
-            // check color type
-            opt = check_color_type(opt);
+            if(check_color_existed(opt)) {
+                // check color type
+                opt = check_color_type(opt);
 
-            // error handler
-            validate_options(opt);
+                // error handler
+                validate_options(opt);
 
-            // convert short hex color
-            opt = convert_hex_color(opt);
+                // convert short hex color
+                opt = convert_hex_color(opt);
 
-            // handle every word in lumpy text and append the result to dom
-            generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
+                // handle every word in lumpy text and append the result to dom
+                generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
+            }
         })(_self, opt);
 
         // trim string
@@ -79,6 +80,14 @@
             return opt;
         }
 
+        // check color existed
+        function check_color_existed(opt) {
+            if(opt.color !== null && opt.color.begin && opt.color.end) {
+                return true;
+            }
+            return false;
+        }
+
         // check color type (strict check)
         function check_color_type(opt) {
             var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
@@ -87,12 +96,12 @@
                 return rgb_regex.test(val);
             }
 
-            if (hex_regex.test(opt.begin) && hex_regex.test(opt.end)) {
+            if (hex_regex.test(opt.color.begin) && hex_regex.test(opt.color.end)) {
                 opt.color_type = 'hex';
                 return opt;
-            } else if($.isArray(opt.begin) && $.isArray(opt.end)
-                    && opt.begin.length === 3 && opt.end.length === 3
-                    && opt.begin.every(rgb_regex_fn) && opt.end.every(rgb_regex_fn)){
+            } else if($.isArray(opt.color.begin) && $.isArray(opt.color.end)
+                    && opt.color.begin.length === 3 && opt.color.end.length === 3
+                    && opt.color.begin.every(rgb_regex_fn) && opt.color.end.every(rgb_regex_fn)){
                 opt.color_type = 'rgb';
             } else {
                 opt.color_type = 'unknown';
@@ -109,9 +118,9 @@
 
         // convert short hex color to real hex color
         function convert_hex_color(opt) {
-            if(opt.begin.length === 4) {
-                opt.begin = generate_hex(opt.begin);
-                opt.end = generate_hex(opt.end);
+            if(opt.color.begin.length === 4) {
+                opt.color.begin = generate_hex(opt.color.begin);
+                opt.color.end = generate_hex(opt.color.end);
 
                 function generate_hex(hex_short_obj) {
                     var hex_short_arr = [hex_short_obj.substr(1, 1), hex_short_obj.substr(2, 1), hex_short_obj.substr(3, 1)];
@@ -128,7 +137,7 @@
             var changed_arr = [];
             for(var i=0, j=1, len=opt.steps; i<len; i++) {
                 if(lumpy_text[i] !== ' ') {
-                    var color = cal_gradient(opt.color_type, opt.begin, opt.end, trim_lumpy_text.length, j++);
+                    var color = cal_gradient(opt.color_type, opt.color.begin, opt.color.end, trim_lumpy_text.length, j++);
                     var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
                 } else {
                     var span = $('<span></span>').text(lumpy_text[i]);
