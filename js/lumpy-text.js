@@ -171,37 +171,39 @@
         // calculate the gradient of color
         function cal_gradient(opt, steps, cur_step) {
             var style = {};
-            if(opt.opacity !== null && opt.opacity.type !== 'unvalid') {
-                opt.opacity.steps = (opt.opacity.steps < steps) ? opt.opacity.steps : steps;
+            var color = opt.color;
+            var opacity = opt.opacity;
+            if(opacity !== null && opacity.type !== 'unvalid') {
+                opacity.steps = (opacity.steps < steps) ? opacity.steps : steps;
 
-                if(opt.opacity.direction === 'end') {
-                    if(cur_step > (steps - opt.opacity.steps)) {
-                        style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * (cur_step - (steps - opt.opacity.steps)) / opt.opacity.steps)).toFixed(2);
+                if(opacity.direction === 'end') {
+                    if(cur_step > (steps - opacity.steps)) {
+                        style.opacity = (Math.abs((opacity.begin - opacity.end) * (cur_step - (steps - opacity.steps)) / opacity.steps)).toFixed(2);
                     }
                 } else {
-                    if(cur_step <= opt.opacity.steps) {
-                        style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * cur_step / opt.opacity.steps)).toFixed(2);
+                    if(cur_step <= opacity.steps) {
+                        style.opacity = (Math.abs((opacity.begin - opacity.end) * cur_step / opacity.steps)).toFixed(2);
                     }
                 }
             }
 
-            if(opt.color !== null && opt.color.type !== 'unvalid') {
-                opt.color.steps = (opt.color.steps < steps) ? opt.color.steps : steps;
+            if(color !== null && color.type !== 'unvalid') {
+                color.steps = (color.steps < steps) ? color.steps : steps;
 
-                if(opt.color.direction === 'end') {
-                    if(cur_step > (steps - opt.color.steps)) {
-                        style.color = construct_color(opt.color.type, opt.color.begin, opt.color.end, (cur_step - (steps - opt.color.steps)), steps);
+                if(color.direction === 'end') {
+                    if(cur_step > (steps - color.steps)) {
+                        style.color = _construct_color(color.type, color.begin, color.end, (cur_step - (steps - color.steps)), steps);
                     }
                 } else {
-                    if(cur_step <= opt.color.steps) {
-                        style.color = construct_color(opt.color.type, opt.color.begin, opt.color.end, cur_step, steps);
+                    if(cur_step <= color.steps) {
+                        style.color = _construct_color(color.type, color.begin, color.end, cur_step, steps);
                     }
                 }
             }
             return style;
 
             // construct 'Hex' color
-            function construct_color(type, begin, end, cur_step, steps) {
+            function _construct_color(type, begin, end, cur_step, steps) {
                 return $([{}, {}, {}]).map(function(index, elem) {
                     if(type === 'hex') {
                         elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
