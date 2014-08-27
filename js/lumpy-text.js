@@ -50,22 +50,16 @@
             opt = check_steps(opt, trim_lumpy_text);
 
             if(check_property_existed(opt.color)) {
-                // check color type
-                opt = check_color_type(opt);
-
-                // error handler
-                validate_options(opt);
+                // check & set color type
+                opt.color.type = check_color_type(opt.color);
 
                 // convert short hex color
-                opt = convert_hex_color(opt);
+                opt.color = convert_hex_color(opt.color);
             }
 
             if(check_property_existed(opt.opacity)) {
-                // check opacity type
-                opt = check_opacity_type(opt);
-
-                // error handler
-                validate_options(opt);
+                // check & set opacity type
+                opt.opacity.type = check_opacity_type(opt.opacity);
             }
 
             // handle every word in lumpy text and append the result to dom
@@ -98,52 +92,43 @@
         }
 
         // check color type (strict check)
-        function check_color_type(opt) {
+        function check_color_type(color) {
             var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
             var rgb_regex = /^((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
+            var type = 'unvalid';
             var rgb_regex_fn = function(val) {
                 return rgb_regex.test(val);
             }
 
-            if (hex_regex.test(opt.color.begin) && hex_regex.test(opt.color.end)) {
-                opt.color_type = 'hex';
-                return opt;
-            } else if($.isArray(opt.color.begin) && $.isArray(opt.color.end)
-                    && opt.color.begin.length === 3 && opt.color.end.length === 3
-                    && opt.color.begin.every(rgb_regex_fn) && opt.color.end.every(rgb_regex_fn)){
-                opt.color_type = 'rgb';
+            if (hex_regex.test(color.begin) && hex_regex.test(color.end)) {
+                type = 'hex';
+            } else if($.isArray(color.begin) && $.isArray(color.end)
+                    && color.begin.length === 3 && color.end.length === 3
+                    && color.begin.every(rgb_regex_fn) && color.end.every(rgb_regex_fn)){
+                type = 'rgb';
             } else {
-                opt.color_type = 'unvalid';
+                console.error('the begin or end color value is unknown');
             }
-            return opt;
+            return type;
         }
 
         // check opacity type (strict check)
-        function check_opacity_type(opt) {
+        function check_opacity_type(opacity) {
             var regex = /^(1|(0\.\d{1,2}))$/;
-            if (regex.test(opt.opacity.begin) && regex.test(opt.opacity.end)) {
-                opt.opacity_type = 'opacity';
+            var type = 'unvalid';
+            if (regex.test(opacity.begin) && regex.test(opacity.end)) {
+                type = 'opacity';
             } else {
-                opt.opacity_type = 'unvalid';
+                console.error('the begin or end opacity value is unknown');
             }
-            return opt;
-        }
-
-        // error handler
-        function validate_options(opt) {
-            if(opt.color_type && opt.color_type === 'unvalid') {
-                throw new Error('the begin or end color value is unknown');
-            }
-            if(opt.opacity_type && opt.opacity_type === 'unvalid') {
-                throw new Error('the begin or end opacity value is unknown');
-            }
+            return type;
         }
 
         // convert short hex color to real hex color
-        function convert_hex_color(opt) {
-            if(opt.color.begin.length === 4) {
-                opt.color.begin = generate_hex(opt.color.begin);
-                opt.color.end = generate_hex(opt.color.end);
+        function convert_hex_color(color) {
+            if(color.type === 'hex' && color.begin.length === 4) {
+                color.begin = generate_hex(color.begin);
+                color.end = generate_hex(color.end);
 
                 function generate_hex(hex_short_obj) {
                     var hex_short_arr = [hex_short_obj.substr(1, 1), hex_short_obj.substr(2, 1), hex_short_obj.substr(3, 1)];
@@ -152,7 +137,7 @@
                     }, '#');
                 }
             }
-            return opt;
+            return color;
         }
 
         // generate the final lumpy text
@@ -186,13 +171,13 @@
         // calculate the gradient of color
         function cal_gradient(opt, steps, cur_step) {
             var style = {};
-            if(opt.opacity !== null && opt.opacity_type !== 'unvalid') {
+            if(opt.opacity !== null && opt.opacity.type !== 'unvalid') {
                 style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * cur_step / steps)).toFixed(2);
             }
 
-            if(opt.color !== null && opt.color_type !== 'unvalid') {
+            if(opt.color !== null && opt.color.type !== 'unvalid') {
                 style.color = $([{}, {}, {}]).map(function(index, elem) {
-                    if(opt.color_type === 'hex') {
+                    if(opt.color.type === 'hex') {
                         elem.begin = parseInt(opt.color.begin.substr(index * 2 + 1, 2), 16);
                         elem.end = parseInt(opt.color.end.substr(index * 2 + 1, 2), 16);
                         elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
