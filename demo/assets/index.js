@@ -12,6 +12,10 @@ $(function () {
             begin: '#058',
             end: '#930'
         },
+        opacity: {
+            begin: 0.1,
+            end: 0.9
+        },
         steps: 50
     });
 });
