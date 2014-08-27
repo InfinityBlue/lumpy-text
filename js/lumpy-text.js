@@ -116,7 +116,7 @@
 
         // check font-size type (strict check)
         function check_size_type(size) {
-            var regex = /./; // TODO font-size regex
+            var regex = /^\d+(\.(\d{1,2}))?[a-zA-Z]{1,3}$/;
             var type = 'unvalid';
             if (regex.test(size.begin) && regex.test(size.end)) {
                 type = 'size';
