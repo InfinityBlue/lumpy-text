@@ -2,9 +2,12 @@ $(function () {
     $('.lumpy').lumpy({
         color: {
             begin: [0, 0, 0],
-            end: [255, 255, 255]
+            end: [255, 255, 255],
+            steps: 60,
+            direction: 'end'
         },
-        steps: 100
+        steps: 100,
+        direction: 'begin'
     });
 
     $('.lumpy-text').lumpy({

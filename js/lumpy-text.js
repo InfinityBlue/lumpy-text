@@ -173,6 +173,7 @@
             var style = {};
             if(opt.opacity !== null && opt.opacity.type !== 'unvalid') {
                 opt.opacity.steps = (opt.opacity.steps < steps) ? opt.opacity.steps : steps;
+
                 if(opt.opacity.direction === 'end') {
                     if(cur_step > (steps - opt.opacity.steps)) {
                         style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * (cur_step - (steps - opt.opacity.steps)) / opt.opacity.steps)).toFixed(2);
@@ -185,13 +186,29 @@
             }
 
             if(opt.color !== null && opt.color.type !== 'unvalid') {
-                style.color = $([{}, {}, {}]).map(function(index, elem) {
-                    if(opt.color.type === 'hex') {
-                        elem.begin = parseInt(opt.color.begin.substr(index * 2 + 1, 2), 16);
-                        elem.end = parseInt(opt.color.end.substr(index * 2 + 1, 2), 16);
+                opt.color.steps = (opt.color.steps < steps) ? opt.color.steps : steps;
+
+                if(opt.color.direction === 'end') {
+                    if(cur_step > (steps - opt.color.steps)) {
+                        style.color = construct_color(opt.color.type, opt.color.begin, opt.color.end, (cur_step - (steps - opt.color.steps)), steps);
+                    }
+                } else {
+                    if(cur_step <= opt.color.steps) {
+                        style.color = construct_color(opt.color.type, opt.color.begin, opt.color.end, cur_step, steps);
+                    }
+                }
+            }
+            return style;
+
+            // construct 'Hex' color
+            function construct_color(type, begin, end, cur_step, steps) {
+                return $([{}, {}, {}]).map(function(index, elem) {
+                    if(type === 'hex') {
+                        elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
+                        elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
                         elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
                     } else {
-                        elem.dist = (opt.color.begin[index] - Number(((opt.color.begin[index] - opt.color.end[index]) * cur_step / steps).toFixed(0))).toString(16);
+                        elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
                     }
 
                     if(elem.dist.length === 1) {
@@ -202,7 +219,6 @@
                     return prev + cur;
                 }, '#');
             }
-            return style;
         }
     };
 })(jQuery);
