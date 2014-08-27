@@ -6,7 +6,13 @@ $(function () {
             steps: 60,
             direction: 'end'
         },
-        steps: 100,
+        size: {
+            begin: '20px',
+            end: '80px',
+            steps: 100,
+            direction: 'end'
+        },
+        steps: 300,
         direction: 'begin'
     });
 
@@ -20,6 +26,10 @@ $(function () {
             end: 0.3,
             steps: 4,
             direction: 'begin'
+        },
+        size: {
+            begin: '20px',
+            end: '60px'
         },
         steps: 50
     });

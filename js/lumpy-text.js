@@ -26,6 +26,7 @@
             var defaults = {
                 color: null,
                 opacity: null,
+                size: null,
                 steps: 50,
                 direction: 'end'
             };
@@ -52,9 +53,15 @@
             if(check_property_existed(opt.color)) {
                 // check & set color type
                 opt.color.type = check_color_type(opt.color);
-
                 // convert short hex color
                 opt.color = convert_hex_color(opt.color);
+            }
+
+            if(check_property_existed(opt.size)) {
+                // check & set font-size type
+                opt.size.type = check_size_type(opt.size);
+                // divide size to value & unit
+                opt.size = divide_size(opt.size);
             }
 
             if(check_property_existed(opt.opacity)) {
@@ -77,18 +84,13 @@
 
         // check steps (light check)
         function check_steps(opt, text) {
-            if(opt.steps < text.length) {
-                opt.steps = text.length;
-            }
+            (opt.steps < text.length) && (opt.steps = text.length);
             return opt;
         }
 
         // check property existed
         function check_property_existed(property) {
-            if(property !== null && property.begin && property.end) {
-                return true;
-            }
-            return false;
+            return (property !== null && Object.keys(property).length > 0) ? true : false;
         }
 
         // check color type (strict check)
@@ -108,6 +110,18 @@
                 type = 'rgb';
             } else {
                 console.error('the begin or end color value is unknown');
+            }
+            return type;
+        }
+
+        // check font-size type (strict check)
+        function check_size_type(size) {
+            var regex = /./; // TODO font-size regex
+            var type = 'unvalid';
+            if (regex.test(size.begin) && regex.test(size.end)) {
+                type = 'size';
+            } else {
+                console.error('the begin or end size value is unknown');
             }
             return type;
         }
@@ -138,6 +152,14 @@
                 }
             }
             return color;
+        }
+
+        // divide size to value & unit
+        function divide_size(size) {
+            size.unit = size.begin.match(/[a-zA-Z]+/g)[0] || 'px';
+            size.begin = size.begin.match(/^\d+(\.\d{1,2})?/g)[0];
+            size.end = size.end.match(/^\d+(\.\d{1,2})?/g)[0];
+            return size;
         }
 
         // generate the final lumpy text
@@ -172,6 +194,7 @@
         function cal_gradient(opt, steps, cur_step) {
             var style = {};
             var color = opt.color;
+            var size = opt.size;
             var opacity = opt.opacity;
             if(opacity !== null && opacity.type !== 'unvalid') {
                 opacity.steps = (opacity.steps < steps) ? opacity.steps : steps;
@@ -183,6 +206,20 @@
                 } else {
                     if(cur_step <= opacity.steps) {
                         style.opacity = (Math.abs((opacity.begin - opacity.end) * cur_step / opacity.steps)).toFixed(2);
+                    }
+                }
+            }
+
+            if(size !== null && size.type !== 'unvalid') {
+                size.steps = (size.steps < steps) ? size.steps : steps;
+
+                if(size.direction === 'end') {
+                    if(cur_step > (steps - size.steps)) {
+                        style['font-size'] = (size.begin - (size.begin - size.end) * (cur_step - (steps - size.steps)) / size.steps).toFixed(2) + size.unit;
+                    }
+                } else {
+                    if(cur_step <= size.steps) {
+                        style['font-size'] = (size.begin - (size.begin - size.end) * cur_step / size.steps).toFixed(2) + size.unit;
                     }
                 }
             }
