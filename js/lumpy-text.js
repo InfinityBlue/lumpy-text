@@ -172,7 +172,16 @@
         function cal_gradient(opt, steps, cur_step) {
             var style = {};
             if(opt.opacity !== null && opt.opacity.type !== 'unvalid') {
-                style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * cur_step / steps)).toFixed(2);
+                opt.opacity.steps = (opt.opacity.steps < steps) ? opt.opacity.steps : steps;
+                if(opt.opacity.direction === 'end') {
+                    if(cur_step > (steps - opt.opacity.steps)) {
+                        style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * (cur_step - (steps - opt.opacity.steps)) / opt.opacity.steps)).toFixed(2);
+                    }
+                } else {
+                    if(cur_step <= opt.opacity.steps) {
+                        style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * cur_step / opt.opacity.steps)).toFixed(2);
+                    }
+                }
             }
 
             if(opt.color !== null && opt.color.type !== 'unvalid') {

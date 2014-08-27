@@ -14,7 +14,9 @@ $(function () {
         },
         opacity: {
             begin: 0.1,
-            end: 0.9
+            end: 0.3,
+            steps: 4,
+            direction: 'begin'
         },
         steps: 50
     });
