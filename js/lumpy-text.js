@@ -113,7 +113,7 @@
                     && opt.color.begin.every(rgb_regex_fn) && opt.color.end.every(rgb_regex_fn)){
                 opt.color_type = 'rgb';
             } else {
-                opt.color_type = 'unknown';
+                opt.color_type = 'unvalid';
             }
             return opt;
         }
@@ -124,18 +124,18 @@
             if (regex.test(opt.opacity.begin) && regex.test(opt.opacity.end)) {
                 opt.opacity_type = 'opacity';
             } else {
-                opt.opacity_type = 'unknown';
+                opt.opacity_type = 'unvalid';
             }
             return opt;
         }
 
         // error handler
         function validate_options(opt) {
-            if(opt.color_type && opt.color_type === 'unknown') {
+            if(opt.color_type && opt.color_type === 'unvalid') {
                 throw new Error('the begin or end color value is unknown');
             }
-            if(opt.opacity_type && opt.opacity_type === 'unknown') {
-                throw new Error('the opacity is unknown');
+            if(opt.opacity_type && opt.opacity_type === 'unvalid') {
+                throw new Error('the begin or end opacity value is unknown');
             }
         }
 
@@ -160,8 +160,9 @@
             var changed_arr = [];
             for(var i=0, j=1, len=opt.steps; i<len; i++) {
                 if(lumpy_text[i] !== ' ') {
-                    var color = cal_gradient(opt.color_type, opt.color.begin, opt.color.end, trim_lumpy_text.length, j++);
-                    var span = $('<span></span>').css('color', color).text(lumpy_text[i]);
+                    var style = cal_gradient(opt, trim_lumpy_text.length, j++);
+                    var span = construct_elem($('<span></span>'), style);
+                    var span = span.text(lumpy_text[i]);
                 } else {
                     var span = $('<span></span>').text(lumpy_text[i]);
                 }
@@ -174,24 +175,40 @@
             }
         }
 
-        // calculate the gradient of color
-        function cal_gradient(color_type, begin, end, steps, cur_step) {
-            return $([{}, {}, {}]).map(function(index, elem) {
-                if(color_type === 'hex') {
-                    elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
-                    elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
-                    elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
-                } else {
-                    elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
-                }
+        // construct span element with new styles
+        function construct_elem(elem, style) {
+            if(Object.keys(style).length > 0) {
+                elem.css(style);
+            }
+            return elem;
+        }
 
-                if(elem.dist.length === 1) {
-                    elem.dist = '0' + elem.dist;
-                }
-                return elem.dist;
-            }).reduce(function(prev, cur) {
-                return prev + cur;
-            }, '#');
+        // calculate the gradient of color
+        function cal_gradient(opt, steps, cur_step) {
+            var style = {};
+            if(opt.opacity !== null && opt.opacity_type !== 'unvalid') {
+                style.opacity = (Math.abs((opt.opacity.begin - opt.opacity.end) * cur_step / steps)).toFixed(2);
+            }
+
+            if(opt.color !== null && opt.color_type !== 'unvalid') {
+                style.color = $([{}, {}, {}]).map(function(index, elem) {
+                    if(opt.color_type === 'hex') {
+                        elem.begin = parseInt(opt.color.begin.substr(index * 2 + 1, 2), 16);
+                        elem.end = parseInt(opt.color.end.substr(index * 2 + 1, 2), 16);
+                        elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
+                    } else {
+                        elem.dist = (opt.color.begin[index] - Number(((opt.color.begin[index] - opt.color.end[index]) * cur_step / steps).toFixed(0))).toString(16);
+                    }
+
+                    if(elem.dist.length === 1) {
+                        elem.dist = '0' + elem.dist;
+                    }
+                    return elem.dist;
+                }).reduce(function(prev, cur) {
+                    return prev + cur;
+                }, '#');
+            }
+            return style;
         }
     };
 })(jQuery);
