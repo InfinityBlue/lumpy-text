@@ -36,18 +36,22 @@
                     </h3>
                     <p class="lumpy lumpy-color">Dolor eaque asperiores repellendus aut modi pariatur tenetur! Repellat mollitia?</p>
 <pre><code>$('lumpy').lumpy({
-    begin: '#fff',
-    end: '#444',
+    color: {
+        begin: '#fff',
+        end: '#444'
+    },
     steps: 60
 });
 </code></pre>
                     <h3 class="function-title">
                         <a name="gradient-direction" class="anchor" href="#gradient-direction"><span class="octicon octicon-link">Gradient Direction</span></a>
                     </h3>
-                    <p class="lumpy lumpy-direction">using the property 'direction' to control the direction of gradient text, choosing 'begin' or 'end'. default is 'end'</p>
+                    <p class="lumpy lumpy-direction">Using the property 'direction' to control the direction of gradient text, choosing 'begin' or 'end'. default is 'end'. Otherwise, note the value of color, it's using rgb way.</p>
 <pre><code>$('lumpy').lumpy({
-    begin: '#444',
-    end: '#fff',
+    color: {
+        begin: [68, 68, 68],
+        end: [255, 255, 255]
+    },
     steps: 60,
     direction: 'begin'
 });
@@ -57,9 +61,11 @@
                     </h3>
                     <p class="lumpy lumpy-more-color">Dolor quaerat cupiditate similique ipsa dolore! Nam omnis praesentium sunt.</p>
 <pre><code>$('lumpy').lumpy({
-    begin: '#ff87a3',
-    end: '#00fa64',
-    steps: 60
+    color: {
+        begin: '#ff87a3',
+        end: '#00fa64',
+    },
+    steps: 100,
 });
 </code></pre>
                     <h6 class="function-title">
