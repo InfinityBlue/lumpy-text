@@ -35,7 +35,7 @@
                         <a name="gradient-color" class="anchor" href="#gradient-color"><span class="octicon octicon-link">Gradient Color</span></a>
                     </h3>
                     <p class="lumpy lumpy-color">Dolor eaque asperiores repellendus aut modi pariatur tenetur! Repellat mollitia?</p>
-<pre><code>$('lumpy').lumpy({
+<pre><code>$('.lumpy').lumpy({
     color: {
         begin: '#fff',
         end: '#444'
@@ -47,7 +47,7 @@
                         <a name="gradient-direction" class="anchor" href="#gradient-direction"><span class="octicon octicon-link">Gradient Direction</span></a>
                     </h3>
                     <p class="lumpy lumpy-direction">Using the property 'direction' to control the direction of gradient text, choosing 'begin' or 'end'. default is 'end'. Otherwise, note the value of color, it's using rgb way.</p>
-<pre><code>$('lumpy').lumpy({
+<pre><code>$('.lumpy').lumpy({
     color: {
         begin: [68, 68, 68],
         end: [255, 255, 255]
@@ -60,7 +60,7 @@
                         <a name="gradient-coloric" class="anchor" href="#gradient-coloric"><span class="octicon octicon-link">Gradient More Color</span></a>
                     </h3>
                     <p class="lumpy lumpy-more-color">Dolor quaerat cupiditate similique ipsa dolore! Nam omnis praesentium sunt.</p>
-<pre><code>$('lumpy').lumpy({
+<pre><code>$('.lumpy').lumpy({
     color: {
         begin: '#ff87a3',
         end: '#00fa64',
@@ -68,6 +68,52 @@
     steps: 100,
 });
 </code></pre>
+                    <h3 class="function-title">
+                        <a name="gradient-opacity" class="anchor" href="#gradient-opacity"><span class="octicon octicon-link">Gradient Opacity</span></a>
+                    </h3>
+                    <p class="lumpy lumpy-opacity">Opacity property something likes 'color', you can set value between 0.00-1.00. Note the 'steps' & 'direction' perperties in opacity object, default steps extend lumpy object, direction property determined where opacity influence in whole text, and it default value is 'begin'</p>
+<pre><code>$('.lumpy').lumpy({
+    color: {
+        begin: '#ff87a3',
+        end: '#00fa64',
+        steps: 199,
+        direction: 'end'
+    },
+    opacity: {
+        begin: 0.8,
+        end: 0.2,
+        steps: 100,
+        direction: 'end'
+    },
+    steps: 250,
+});
+</code></pre>
+                    <h3 class="function-title">
+                        <a name="gradient-size" class="anchor" href="#gradient-size"><span class="octicon octicon-link">Gradient Size</span></a>
+                    </h3>
+                    <p class="lumpy lumpy-size">Font-size makes your text Expressive. it likes 'color' & 'opacity'. lumpy supports all units suffix for size property</p>
+<pre><code>$('.lumpy').lumpy({
+    color: {
+        begin: '#ff87a3',
+        end: '#00fa64',
+        steps: 199,
+        direction: 'end'
+    },
+    opacity: {
+        begin: 0.8,
+        end: 0.2,
+        steps: 100,
+        direction: 'end'
+    },
+    size: {
+        begin: '80px',
+        end: '20px',
+        steps: 22,
+    },
+    steps: 300,
+});
+</code></pre>
+
                     <h6 class="function-title">
                         <a name="more-feature" class="anchor" href="#more-feature"><span class="octicon octicon-link">More features are being developed</span></a>
                     </h6>

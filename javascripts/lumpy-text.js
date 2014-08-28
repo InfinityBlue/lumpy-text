@@ -201,11 +201,11 @@
 
                 if(opacity.direction === 'end') {
                     if(cur_step > (steps - opacity.steps)) {
-                        style.opacity = (Math.abs((opacity.begin - opacity.end) * (cur_step - (steps - opacity.steps)) / opacity.steps)).toFixed(2);
+                        style.opacity = (opacity.begin - (opacity.begin - opacity.end) * (cur_step - (steps - opacity.steps)) / opacity.steps).toFixed(2);
                     }
                 } else {
                     if(cur_step <= opacity.steps) {
-                        style.opacity = (Math.abs((opacity.begin - opacity.end) * cur_step / opacity.steps)).toFixed(2);
+                        style.opacity = (opacity.begin - (opacity.begin - opacity.end) * cur_step / opacity.steps).toFixed(2);
                     }
                 }
             }
