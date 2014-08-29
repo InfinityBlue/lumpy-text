@@ -1,6 +1,7 @@
 (function($) {
     // patch the reduce to jQuery
     $.reduce = function(arr, reduce_cb, prev) {
+        var result = '';
         if(arr.toArray !== undefined) {
             arr = arr.toArray();
         }
@@ -17,7 +18,7 @@
         return $.reduce(this, function(prev, cur, i, arr) {
             return cb.call(null, prev, cur, i, arr);
         }, prev);
-    }
+    };
 
     // lumpy function
     $.fn.lumpy = function (opt) {
@@ -32,23 +33,11 @@
             };
             opt = $.extend(defaults, opt);
 
-            var origin_text = _self.text();
-            var origin_text_len = origin_text.length;
-
-            if(opt.steps > origin_text_len) opt.steps = origin_text_len;
-
-            if(opt.direction === 'end') {
-                var lumpy_text = origin_text.substr(origin_text_len - opt.steps);
-                var trim_lumpy_text = trim(lumpy_text, true);
-                _self.text(origin_text.substr(0, origin_text_len - opt.steps));
-            } else if (opt.direction === 'begin') {
-                var lumpy_text = origin_text.substr(0, opt.steps);
-                var trim_lumpy_text = trim(lumpy_text, true);
-                _self.text(origin_text.substr(opt.steps));
-            }
-
-            // check the steps length
-            opt = check_steps(opt, trim_lumpy_text);
+            opt.origin_text = _self.text();
+            opt.steps = check_steps(opt.steps, opt.origin_text.length);
+            // lumpy_text.length === opt.steps
+            opt.lumpy_text = text_clip(_self, opt.direction, opt.origin_text, opt.steps);
+            opt.trim_text = trim(opt.lumpy_text, true);
 
             if(check_property_existed(opt.color)) {
                 // check & set color type
@@ -59,19 +48,28 @@
 
             if(check_property_existed(opt.size)) {
                 // check & set font-size type
-                opt.size.type = check_size_type(opt.size);
+                opt.size.type = check_common_type('size', opt.size);
                 // divide size to value & unit
                 opt.size = divide_size(opt.size);
             }
 
             if(check_property_existed(opt.opacity)) {
                 // check & set opacity type
-                opt.opacity.type = check_opacity_type(opt.opacity);
+                opt.opacity.type = check_common_type('opacity', opt.opacity);
             }
 
             // handle every word in lumpy text and append the result to dom
-            generate_lumpy_text(_self, opt, lumpy_text, trim_lumpy_text);
+            generate_lumpy_text(_self, opt);
         })(_self, opt);
+
+        // clip origin text
+        function text_clip(lumpy_obj, direction, origin_text, steps) {
+            if(direction === 'begin') {
+                return origin_text.substr(0, opt.steps);
+            } else {
+                return origin_text.substr(origin_text.length - steps);
+            }
+        }
 
         // trim string
         function trim(str, is_global) {
@@ -83,9 +81,9 @@
         }
 
         // check steps (light check)
-        function check_steps(opt, text) {
-            (opt.steps < text.length) && (opt.steps = text.length);
-            return opt;
+        function check_steps(steps, text_length) {
+            (steps < text_length) && (steps = text_length);
+            return steps;
         }
 
         // check property existed
@@ -104,9 +102,9 @@
 
             if (hex_regex.test(color.begin) && hex_regex.test(color.end)) {
                 type = 'hex';
-            } else if($.isArray(color.begin) && $.isArray(color.end)
-                    && color.begin.length === 3 && color.end.length === 3
-                    && color.begin.every(rgb_regex_fn) && color.end.every(rgb_regex_fn)){
+            } else if($.isArray(color.begin) && $.isArray(color.end) &&
+                    color.begin.length === 3 && color.end.length === 3 &&
+                    color.begin.every(rgb_regex_fn) && color.end.every(rgb_regex_fn)){
                 type = 'rgb';
             } else {
                 console.error('the begin or end color value is unknown');
@@ -114,42 +112,35 @@
             return type;
         }
 
-        // check font-size type (strict check)
-        function check_size_type(size) {
-            var regex = /^\d+(\.(\d{1,2}))?[a-zA-Z]{1,3}$/;
+        // check similar property type (strict check)
+        function check_common_type(name, property) {
+            var regex = null;
             var type = 'unvalid';
-            if (regex.test(size.begin) && regex.test(size.end)) {
-                type = 'size';
-            } else {
-                console.error('the begin or end size value is unknown');
+            if(name === 'opacity') {
+                regex = /^(1|(0\.\d{1,2}))$/;
             }
-            return type;
-        }
-
-        // check opacity type (strict check)
-        function check_opacity_type(opacity) {
-            var regex = /^(1|(0\.\d{1,2}))$/;
-            var type = 'unvalid';
-            if (regex.test(opacity.begin) && regex.test(opacity.end)) {
-                type = 'opacity';
+            if(name === 'size') {
+                regex = /^\d+(\.(\d{1,2}))?[a-zA-Z]{1,3}$/;
+            }
+            if (regex.test(property.begin) && regex.test(property.end)) {
+                type = name;
             } else {
-                console.error('the begin or end opacity value is unknown');
+                console.error('the begin or end ' + name + ' value is unknown');
             }
             return type;
         }
 
         // convert short hex color to real hex color
         function convert_hex_color(color) {
+            function _generate_hex(hex_short_obj) {
+                var hex_short_arr = [hex_short_obj.substr(1, 1), hex_short_obj.substr(2, 1), hex_short_obj.substr(3, 1)];
+                return $.reduce(hex_short_arr, function(prev, cur) {
+                    return prev + cur  + cur;
+                }, '#');
+            }
             if(color.type === 'hex' && color.begin.length === 4) {
-                color.begin = generate_hex(color.begin);
-                color.end = generate_hex(color.end);
-
-                function generate_hex(hex_short_obj) {
-                    var hex_short_arr = [hex_short_obj.substr(1, 1), hex_short_obj.substr(2, 1), hex_short_obj.substr(3, 1)];
-                    return $.reduce(hex_short_arr, function(prev, cur) {
-                        return prev + cur  + cur;
-                    }, '#');
-                }
+                color.begin = _generate_hex(color.begin);
+                color.end = _generate_hex(color.end);
             }
             return color;
         }
@@ -163,21 +154,28 @@
         }
 
         // generate the final lumpy text
-        function generate_lumpy_text(lumpy_obj, opt, lumpy_text, trim_lumpy_text) {
+        function generate_lumpy_text(lumpy_obj, opt) {
             var changed_arr = [];
+            var lumpy_text = opt.lumpy_text;
+            var trim_text_length = opt.trim_text.length;
+            var origin_text = opt.origin_text;
+            var style = null;
+            var span = null;
+
             for(var i=0, j=1, len=opt.steps; i<len; i++) {
                 if(lumpy_text[i] !== ' ') {
-                    var style = cal_gradient(opt, trim_lumpy_text.length, j++);
-                    var span = construct_elem($('<span></span>'), style);
-                    var span = span.text(lumpy_text[i]);
+                    style = cal_gradient(opt, trim_text_length, j++);
+                    span = construct_elem($('<span></span>'), style).text(lumpy_text[i]);
                 } else {
-                    var span = $('<span></span>').text(lumpy_text[i]);
+                    span = $('<span></span>').text(lumpy_text[i]);
                 }
                 changed_arr.push(span);
             }
             if(opt.direction === 'end') {
+                lumpy_obj.text(origin_text.substr(0, origin_text.length - opt.steps));
                 lumpy_obj.append(changed_arr);
             } else if (opt.direction === 'begin') {
+                lumpy_obj.text(origin_text.substr(opt.steps));
                 lumpy_obj.prepend(changed_arr);
             }
         }
@@ -196,6 +194,27 @@
             var color = opt.color;
             var size = opt.size;
             var opacity = opt.opacity;
+
+            // construct 'Hex' color
+            function _construct_color(type, begin, end, cur_step, steps) {
+                return $([{}, {}, {}]).map(function(index, elem) {
+                    if(type === 'hex') {
+                        elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
+                        elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
+                        elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
+                    } else {
+                        elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
+                    }
+
+                    if(elem.dist.length === 1) {
+                        elem.dist = '0' + elem.dist;
+                    }
+                    return elem.dist;
+                }).reduce(function(prev, cur) {
+                    return prev + cur;
+                }, '#');
+            }
+
             if(opacity !== null && opacity.type !== 'unvalid') {
                 opacity.steps = (opacity.steps < steps) ? opacity.steps : steps;
 
@@ -239,25 +258,6 @@
             }
             return style;
 
-            // construct 'Hex' color
-            function _construct_color(type, begin, end, cur_step, steps) {
-                return $([{}, {}, {}]).map(function(index, elem) {
-                    if(type === 'hex') {
-                        elem.begin = parseInt(begin.substr(index * 2 + 1, 2), 16);
-                        elem.end = parseInt(end.substr(index * 2 + 1, 2), 16);
-                        elem.dist = (elem.begin - Number(((elem.begin - elem.end) * cur_step / steps).toFixed(0))).toString(16);
-                    } else {
-                        elem.dist = (begin[index] - Number(((begin[index] - end[index]) * cur_step / steps).toFixed(0))).toString(16);
-                    }
-
-                    if(elem.dist.length === 1) {
-                        elem.dist = '0' + elem.dist;
-                    }
-                    return elem.dist;
-                }).reduce(function(prev, cur) {
-                    return prev + cur;
-                }, '#');
-            }
         }
     };
 })(jQuery);
