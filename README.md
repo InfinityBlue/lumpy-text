@@ -1,9 +1,9 @@
-# lumpy-text
 [![Code Climate](https://codeclimate.com/github/abruzzihraig/lumpy-text/badges/gpa.svg)](https://codeclimate.com/github/abruzzihraig/lumpy-text)  
+# lumpy-text
 
 ===
 The lumpy-text is a project that makes you using linear text.  
-See [here](href="http://abruzzihraig.github.io/lumpy-text")!
+See [here](http://abruzzihraig.github.io/lumpy-text)!
 
 ## To do
 - [x] opacity feature
