@@ -82,8 +82,7 @@
 
         // check steps (light check)
         function check_steps(steps, text_length) {
-            (steps < text_length) && (steps = text_length);
-            return steps;
+            return Math.min(steps, text_length);
         }
 
         // check property existed
@@ -96,7 +95,7 @@
             var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
             var rgb_regex = /^((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
             var type = 'unvalid';
-            var rgb_regex_fn = function(val) {
+            function rgb_valid(val) {
                 return rgb_regex.test(val);
             }
 
@@ -104,7 +103,7 @@
                 type = 'hex';
             } else if($.isArray(color.begin) && $.isArray(color.end) &&
                     color.begin.length === 3 && color.end.length === 3 &&
-                    color.begin.every(rgb_regex_fn) && color.end.every(rgb_regex_fn)){
+                    color.begin.every(rgb_valid) && color.end.every(rgb_valid)){
                 type = 'rgb';
             } else {
                 console.error('the begin or end color value is unknown');
