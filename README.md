@@ -1,6 +1,7 @@
 # lumpy-text
+[![Code Climate](https://codeclimate.com/github/abruzzihraig/lumpy-text/badges/gpa.svg)](https://codeclimate.com/github/abruzzihraig/lumpy-text)  
+
 ===
-[![Code Climate](https://codeclimate.com/github/abruzzihraig/lumpy-text/badges/gpa.svg)](https://codeclimate.com/github/abruzzihraig/lumpy-text)
 The lumpy-text is a project that makes you using linear text.  
 See [here](href="http://abruzzihraig.github.io/lumpy-text")!
 
@@ -13,7 +14,7 @@ See [here](href="http://abruzzihraig.github.io/lumpy-text")!
 ## License
 The MIT License (MIT)
 
-Copyright (c) [2014] [He Yang <abruzzi.hraig@gmail.com>]
+Copyright (c) 2014 He Yang <[abruzzi.hraig@gmail.com](mailto:abruzzi.hraig@gmail.com)>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
