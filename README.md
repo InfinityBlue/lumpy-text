@@ -2,7 +2,7 @@
 # lumpy-text
 
 The lumpy-text is a project that makes you using linear text.  
-See [here](http://abruzzihraig.github.io/lumpy-text)!
+Click [lumpy-text](http://abruzzihraig.github.io/lumpy-text)!
 
 ## To do
 - [x] opacity feature
