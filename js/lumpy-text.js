@@ -102,7 +102,13 @@
 
         // check property existed
         function check_property_existed(property) {
-            return (property !== null && Object.keys(property).length > 0) ? true : false
+            function sub_check(property) {
+                return Object.keys(property).some(function(i){return property[i] === null});
+            }
+            if(property === null) return false;
+            if(Object.keys(property).length < 1) return false;
+            if(sub_check(property)) return false;
+            return true;
         }
 
         // check color type (strict check)
