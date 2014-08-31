@@ -47,30 +47,53 @@
 
             if(check_property_existed(opt.color)) {
                 // check & set color type
-                opt.color.type = check_color_type(opt.color);
+                opt.color.type = check_color_type(opt.color, function() {
+                    console.error('The property color is unvalid');
+                });
                 // convert short hex color
                 opt.color = convert_hex_color(opt.color);
             }
 
-            if(check_property_existed(opt.shadow.color) && check_property_existed(opt.shadow.x) && check_property_existed(opt.shadow.y) &&
-                    check_property_existed(opt.shadow.blur)) {
+            if(check_property_existed(opt.shadow)) {
                 // check & set shadow type
-                opt.shadow.type = check_shadow_type('shadow', opt.shadow);
+                opt.shadow.color.type = check_color_type(opt.shadow.color, function() {
+                    console.error('The property color in shadow is unvalid');
+                });
+                opt.shadow.x.type = check_common_type('offset_x', opt.shadow.x, function() {
+                    console.error('The property x in shadow is unvalid');
+                });
+                opt.shadow.y.type = check_common_type('offset_y', opt.shadow.y, function() {
+                    console.error('The property y in shadow is unvalid');
+                });
+                opt.shadow.blur.type = check_common_type('blur', opt.shadow.blur, function() {
+                    console.error('The property blur in shadow is unvalid');
+                });
+                opt.shadow.type = check_shadow_type(opt.shadow, function() {
+                    console.error('The property shadow is unvalid');
+                });
+
                 // convert short hex color
                 opt.shadow.color = convert_hex_color(opt.shadow.color);
-                opt.shadow.blur = divide_size(opt.shadow.blur);
+                // divide property to value & unit
+                opt.shadow.x = divide_unit(opt.shadow.x);
+                opt.shadow.y = divide_unit(opt.shadow.y);
+                opt.shadow.blur = divide_unit(opt.shadow.blur);
             }
 
             if(check_property_existed(opt.size)) {
                 // check & set font-size type
-                opt.size.type = check_common_type('size', opt.size);
+                opt.size.type = check_common_type('size', opt.size, function() {
+                    console.error('The property size is unvalid');
+                });
                 // divide size to value & unit
-                opt.size = divide_size(opt.size);
+                opt.size = divide_unit(opt.size);
             }
 
             if(check_property_existed(opt.opacity)) {
                 // check & set opacity type
-                opt.opacity.type = check_common_type('opacity', opt.opacity);
+                opt.opacity.type = check_common_type('opacity', opt.opacity, function() {
+                    console.error('The property opacity is unvalid');
+                });
             }
 
             // handle every word in lumpy text and append the result to dom
@@ -112,7 +135,7 @@
         }
 
         // check color type (strict check)
-        function check_color_type(color) {
+        function check_color_type(color, err_handler) {
             var hex_regex = /^#((((\d|[a-fA-F])){3})|(((\d|[a-fA-F])){6}))$/;
             var rgb_regex = /^((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
             var type = 'unvalid';
@@ -127,30 +150,44 @@
                     color.begin.every(rgb_valid) && color.end.every(rgb_valid)){
                 type = 'rgb';
             } else {
-                console.error('the begin or end color value is unknown');
+                err_handler && err_handler();
             }
             return type;
         }
 
-        // check shadow type //TODO
-        function check_shadow_type(shadow) {
-            return 'shadow';
+        // check shadow type (strict check)
+        function check_shadow_type(shadow, err_handler) {
+            var type = 'shadow';
+            for (var i in shadow) {
+                if(i.type === 'unvalid') {
+                    shadow.type = 'unvalid';
+                    err_handler && err_handler();
+                    return type;
+                }
+            }
+            return type;
         }
 
         // check similar property type (strict check)
-        function check_common_type(name, property) {
+        function check_common_type(name, property, err_handler) {
             var regex = null;
+            var divide_unit_obj = {
+                size: null,
+                blur: null,
+                offset_x: null,
+                offset_y: null
+            };
             var type = 'unvalid';
             if(name === 'opacity') {
                 regex = /^(1|(0\.\d{1,2}))$/;
             }
-            if(name === 'size') {
+            if(name in divide_unit_obj) {
                 regex = /^\d+(\.(\d{1,2}))?[a-zA-Z]{1,3}$/;
             }
-            if (regex.test(property.begin) && regex.test(property.end)) {
+            if(regex.test(property.begin) && regex.test(property.end)) {
                 type = name;
             } else {
-                console.error('the begin or end ' + name + ' value is unknown');
+                err_handler && err_handler();
             }
             return type;
         }
@@ -170,8 +207,8 @@
             return color;
         }
 
-        // divide size to value & unit
-        function divide_size(size) {
+        // divide value to pure value & unit
+        function divide_unit(size) {
             size.unit = size.begin.match(/[a-zA-Z]+/g)[0] || 'px';
             size.begin = size.begin.match(/^\d+(\.\d{1,2})?/g)[0];
             size.end = size.end.match(/^\d+(\.\d{1,2})?/g)[0];
@@ -220,7 +257,7 @@
             var shadow = opt.shadow;
             var size = opt.size;
             var opacity = opt.opacity;
-            // shadow
+            // shadow temp properties
             var cur_x = '';
             var cur_y = '';
             var cur_color = '';
@@ -279,16 +316,16 @@
 
                 if(shadow.direction === 'end') {
                     if(cur_step > (steps - shadow.steps)) {
-                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + 'px';
-                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + 'px';
+                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.x.unit;
+                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.y.unit;
                         cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, (cur_step - (steps - shadow.steps)), steps);
                         cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.blur.unit;
                     }
                 }
                 else {
                     if(cur_steps <= shadow.steps) {
-                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * cur_step / shadow.steps).toFixed(2) + 'px';
-                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * cur_step / shadow.steps).toFixed(2) + 'px';
+                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * cur_step / shadow.steps).toFixed(2) + shadow.x.unit;
+                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * cur_step / shadow.steps).toFixed(2) + shadow.y.unit;
                         cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, cur_step, steps);
                         cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * cur_step / shadow.steps).toFixed(2) + shadow.blur.unit;
                     }
