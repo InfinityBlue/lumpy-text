@@ -28,6 +28,12 @@
                 color: null,
                 opacity: null,
                 size: null,
+                shadow: {
+                    color: null,
+                    x: null,
+                    y: null,
+                    blur: null
+                },
                 steps: 50,
                 direction: 'end'
             };
@@ -44,6 +50,15 @@
                 opt.color.type = check_color_type(opt.color);
                 // convert short hex color
                 opt.color = convert_hex_color(opt.color);
+            }
+
+            if(check_property_existed(opt.shadow.color) && check_property_existed(opt.shadow.x) && check_property_existed(opt.shadow.y) &&
+                    check_property_existed(opt.shadow.blur)) {
+                // check & set shadow type
+                opt.shadow.type = check_shadow_type('shadow', opt.shadow);
+                // convert short hex color
+                opt.shadow.color = convert_hex_color(opt.shadow.color);
+                opt.shadow.blur = divide_size(opt.shadow.blur);
             }
 
             if(check_property_existed(opt.size)) {
@@ -87,7 +102,7 @@
 
         // check property existed
         function check_property_existed(property) {
-            return (property !== null && Object.keys(property).length > 0) ? true : false;
+            return (property !== null && Object.keys(property).length > 0) ? true : false
         }
 
         // check color type (strict check)
@@ -109,6 +124,11 @@
                 console.error('the begin or end color value is unknown');
             }
             return type;
+        }
+
+        // check shadow type //TODO
+        function check_shadow_type(shadow) {
+            return 'shadow';
         }
 
         // check similar property type (strict check)
@@ -191,8 +211,14 @@
         function cal_gradient(opt, steps, cur_step) {
             var style = {};
             var color = opt.color;
+            var shadow = opt.shadow;
             var size = opt.size;
             var opacity = opt.opacity;
+            // shadow
+            var cur_x = '';
+            var cur_y = '';
+            var cur_color = '';
+            var cur_blur = '';
 
             // construct 'Hex' color
             function _construct_color(type, begin, end, cur_step, steps) {
@@ -240,6 +266,28 @@
                         style['font-size'] = (size.begin - (size.begin - size.end) * cur_step / size.steps).toFixed(2) + size.unit;
                     }
                 }
+            }
+
+            if(shadow.x !== null && shadow.y !== null && shadow.type !== 'unvalid') {
+                shadow.steps = (shadow.steps < steps) ? shadow.steps : steps;
+
+                if(shadow.direction === 'end') {
+                    if(cur_step > (steps - shadow.steps)) {
+                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + 'px';
+                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + 'px';
+                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, (cur_step - (steps - shadow.steps)), steps);
+                        cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.blur.unit;
+                    }
+                }
+                else {
+                    if(cur_steps <= shadow.steps) {
+                        cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * cur_step / shadow.steps).toFixed(2) + 'px';
+                        cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * cur_step / shadow.steps).toFixed(2) + 'px';
+                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, cur_step, steps);
+                        cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * cur_step / shadow.steps).toFixed(2) + shadow.blur.unit;
+                    }
+                }
+                style['text-shadow'] = cur_color + ' ' + cur_x + ' ' + cur_y + ' ' + cur_blur;
             }
 
             if(color !== null && color.type !== 'unvalid') {
