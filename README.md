@@ -3,12 +3,14 @@
 
 The lumpy-text is a project that makes you using linear text.  
 Click [lumpy-text](http://abruzzihraig.github.io/lumpy-text)!
+We don't care about IE6,7,8!!!
 
 ## To do
 - [x] opacity feature
 - [x] font-size feature
-- [ ] text-shadow feature
+- [x] text-shadow feature
 - [ ] jsHint
+- [ ] svg way
 
 ## License
 The MIT License (MIT)
