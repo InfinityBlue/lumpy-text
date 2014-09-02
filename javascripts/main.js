@@ -25,7 +25,7 @@ $(function() {
         color: {
             begin: '#ff87a3',
             end: '#00fa64',
-            steps: 199,
+            steps: 208,
             direction: 'end'
         },
         opacity: {
@@ -56,4 +56,39 @@ $(function() {
         },
         steps: 300,
     });
+    $('.lumpy-shadow').lumpy({
+        color: {
+            begin: '#ff87a3',
+            end: '#00fa64',
+            direction: 'end'
+        },
+        opacity: {
+            begin: 0.8,
+            end: 0.2,
+            steps: 100,
+            direction: 'end'
+        },
+        shadow: {
+            x: {
+                begin: '2px',
+                end: '20px',
+            },
+            y: {
+                begin: '5px',
+                end: '30px'
+            },
+            color: {
+                begin: '#943',
+                end: '#4f8'
+            },
+            blur: {
+                begin: '2px',
+                end: '10px'
+            },
+            direction: 'end',
+            steps: 250
+        },
+        steps: 250,
+    });
+
 });

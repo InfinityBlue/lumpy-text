@@ -34,7 +34,7 @@
                     <h3 class="function-title">
                         <a name="gradient-color" class="anchor" href="#gradient-color"><span class="octicon octicon-link">Gradient Color</span></a>
                     </h3>
-                    <p class="lumpy lumpy-color">Dolor eaque asperiores repellendus aut modi pariatur tenetur! Repellat mollitia?</p>
+                    <p class="lumpy lumpy-color">Can you see the linear grandient text here? From white to black, that is simple.</p>
 <pre><code>$('.lumpy').lumpy({
     color: {
         begin: '#fff',
@@ -59,7 +59,7 @@
                     <h3 class="function-title">
                         <a name="gradient-coloric" class="anchor" href="#gradient-coloric"><span class="octicon octicon-link">Gradient More Color</span></a>
                     </h3>
-                    <p class="lumpy lumpy-more-color">Dolor quaerat cupiditate similique ipsa dolore! Nam omnis praesentium sunt.</p>
+                    <p class="lumpy lumpy-more-color">Colorful gradient text maybe not a good choice, unless you really know what is 'color'.</p>
 <pre><code>$('.lumpy').lumpy({
     color: {
         begin: '#ff87a3',
@@ -76,7 +76,7 @@
     color: {
         begin: '#ff87a3',
         end: '#00fa64',
-        steps: 199,
+        steps: 208,
         direction: 'end'
     },
     opacity: {
@@ -113,6 +113,46 @@
     steps: 300,
 });
 </code></pre>
+                    <h3 class="function-title">
+                        <a name="gradient-shadow" class="anchor" href="#gradient-shadow"><span class="octicon octicon-link">Gradient Shadow</span></a>
+                    </h3>
+                    <p class="lumpy lumpy-shadow">Shadow is a powerful property in lumpy-text, it has 4 properties: 'color','x','y','blur', it likes 'text-shadow' in css. You can config them respectively, and they all have 'begin'&'end', and extend the shadow properties 'steps'&'direction'.</p>
+<pre><code>$('.lumpy').lumpy({
+    color: {
+        begin: '#ff87a3',
+        end: '#00fa64',
+        direction: 'end'
+    },
+    opacity: {
+        begin: 0.8,
+        end: 0.2,
+        steps: 100,
+        direction: 'end'
+    },
+    shadow: {
+        x: {
+            begin: '2px',
+            end: '20px',
+        },
+        y: {
+            begin: '5px',
+            end: '30px'
+        },
+        color: {
+            begin: '#943',
+            end: '#4f8'
+        },
+        blur: {
+            begin: '2px',
+            end: '10px'
+        },
+        direction: 'end',
+        steps: 250
+    },
+    steps: 250,
+});
+</code></pre>
+
 
                     <h6 class="function-title">
                         <a name="more-feature" class="anchor" href="#more-feature"><span class="octicon octicon-link">More features are being developed</span></a>
