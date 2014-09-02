@@ -2,13 +2,15 @@
 ===
 [![Code Climate](https://codeclimate.com/github/abruzzihraig/lumpy-text/badges/gpa.svg)](https://codeclimate.com/github/abruzzihraig/lumpy-text)
 The lumpy-text is a project that makes you using linear text.  
-See [here](href="http://abruzzihraig.github.io/lumpy-text")!
+See [here](href="http://abruzzihraig.github.io/lumpy-text")!  
+We don't care about IE6,7,8!!!
 
 # To do
 - [x] opacity feature
 - [x] font-size feature
-- [ ] text-shadow feature
+- [x] text-shadow feature
 - [ ] jsHint
+- [ ] svg way
 
 # License
 The MIT License (MIT)
