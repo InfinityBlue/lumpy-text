@@ -12,6 +12,24 @@ $(function () {
             steps: 100,
             direction: 'end'
         },
+        shadow: {
+            x: {
+                begin: '2px',
+                end: '20px',
+            },
+            y: {
+                begin: '5px',
+                end: '30px'
+            },
+            color: {
+                begin: '#943',
+                end: '#4f8'
+            },
+            blur: {
+                begin: '2px',
+                end: '5px'
+            }
+        },
         steps: 300,
         direction: 'begin'
     });

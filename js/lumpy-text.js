@@ -323,7 +323,7 @@
                     }
                 }
                 else {
-                    if(cur_steps <= shadow.steps) {
+                    if(cur_step <= shadow.steps) {
                         cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * cur_step / shadow.steps).toFixed(2) + shadow.x.unit;
                         cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * cur_step / shadow.steps).toFixed(2) + shadow.y.unit;
                         cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, cur_step, steps);
