@@ -318,7 +318,7 @@
                     if(cur_step > (steps - shadow.steps)) {
                         cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.x.unit;
                         cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.y.unit;
-                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, (cur_step - (steps - shadow.steps)), steps);
+                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, (cur_step - (steps - shadow.steps)), shadow.steps);
                         cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * (cur_step - (steps - shadow.steps)) / shadow.steps).toFixed(2) + shadow.blur.unit;
                     }
                 }
@@ -326,7 +326,7 @@
                     if(cur_step <= shadow.steps) {
                         cur_x = (shadow.x.begin - (shadow.x.begin - shadow.x.end) * cur_step / shadow.steps).toFixed(2) + shadow.x.unit;
                         cur_y = (shadow.y.begin - (shadow.y.begin - shadow.y.end) * cur_step / shadow.steps).toFixed(2) + shadow.y.unit;
-                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, cur_step, steps);
+                        cur_color = _construct_color(shadow.color.type, shadow.color.begin, shadow.color.end, cur_step, shadow.steps);
                         cur_blur = (shadow.blur.begin - (shadow.blur.begin - shadow.blur.end) * cur_step / shadow.steps).toFixed(2) + shadow.blur.unit;
                     }
                 }
@@ -338,11 +338,11 @@
 
                 if(color.direction === 'end') {
                     if(cur_step > (steps - color.steps)) {
-                        style.color = _construct_color(color.type, color.begin, color.end, (cur_step - (steps - color.steps)), steps);
+                        style.color = _construct_color(color.type, color.begin, color.end, (cur_step - (steps - color.steps)), color.steps);
                     }
                 } else {
                     if(cur_step <= color.steps) {
-                        style.color = _construct_color(color.type, color.begin, color.end, cur_step, steps);
+                        style.color = _construct_color(color.type, color.begin, color.end, cur_step, color.steps);
                     }
                 }
             }
